@@ -1,0 +1,11 @@
+FROM node:20.12
+
+RUN mkdir /app && chown -R node:node /app
+WORKDIR /app
+
+USER node
+
+COPY --from=ghcr.io/shk-webpr/ci-cd-github-dependencies:latest --chown=node:node /app .
+COPY --chown=node:node . .
+
+RUN npm run build

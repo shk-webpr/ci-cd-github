@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  dependencies:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker login
+        run: |
+          echo ${{ secrets.PAT }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+      - name: Build and publish
+        run: |
+          docker build  -f .docker/Dockerfile-dependencies -t ${{ env.REGISTRY }}/${{ github.repository }}-dependencies .
+          docker push ${{ env.REGISTRY }}/${{ github.repository }}-dependencies
+  build:
+    name: Build application
+    needs: dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker login
+        run: |
+          echo ${{ secrets.PAT }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+      - name: Build and publish
+        run: |
+          id=$(docker create ${{ env.REGISTRY }}/${{ github.repository }}-dependencies)
+          docker cp $id:/app - > .
+          docker rm -v $id
+          docker build  -f .docker/Dockerfile-build -t ${{ env.REGISTRY }}/${{ github.repository }}-build:${{ github.sha }} .
+          docker push ${{ env.REGISTRY }}/${{ github.repository }}-build:${{ github.sha }}
+  deploy:
+    name: Deploy application
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fake deploy
+        run: echo "Hello there, ${{ env.DEPLOY_USER }}"
