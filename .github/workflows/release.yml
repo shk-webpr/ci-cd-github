@@ -35,7 +35,7 @@ jobs:
       - name: Build and publish
         run: |
           id=$(docker create ${{ env.REGISTRY }}/${{ github.repository }}-dependencies)
-          docker cp $id:/app - > .
+          docker cp -a $id:/app .
           docker rm -v $id
           docker build  -f .docker/Dockerfile-build -t ${{ env.REGISTRY }}/${{ github.repository }}-build:${{ github.sha }} .
           docker push ${{ env.REGISTRY }}/${{ github.repository }}-build:${{ github.sha }}
