@@ -12,6 +12,7 @@ jobs:
   dependencies:
     name: Install dependencies
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v3
       - name: Docker login
@@ -25,6 +26,7 @@ jobs:
     name: Build application
     needs: dependencies
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v3
       - name: Docker login
@@ -41,6 +43,7 @@ jobs:
     name: Deploy application
     needs: build
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Fake deploy
         run: echo "Hello there, ${{ env.DEPLOY_USER }}"
