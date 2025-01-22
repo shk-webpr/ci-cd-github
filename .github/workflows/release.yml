@@ -34,9 +34,6 @@ jobs:
           echo ${{ secrets.PAT }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
       - name: Build and publish
         run: |
-          id=$(docker create ${{ env.REGISTRY }}/${{ github.repository }}-dependencies)
-          docker cp -a $id:/app .
-          docker rm -v $id
           docker build  -f .docker/Dockerfile-build -t ${{ env.REGISTRY }}/${{ github.repository }}-build:${{ github.sha }} .
           docker push ${{ env.REGISTRY }}/${{ github.repository }}-build:${{ github.sha }}
   deploy:
