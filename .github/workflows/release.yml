@@ -43,4 +43,4 @@ jobs:
     environment: production
     steps:
       - name: Fake deploy
-        run: echo "Hello there, ${{ env.DEPLOY_USER }}"
+        run: echo "Hello there, $DEPLOY_USER"
