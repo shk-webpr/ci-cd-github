@@ -42,5 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Debug
+        run: env | grep USER
       - name: Fake deploy
         run: echo "Hello there, $DEPLOY_USER"
